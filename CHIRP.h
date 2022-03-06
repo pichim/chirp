@@ -3,47 +3,30 @@
 
 #include <math.h>
 #include <stdint.h>
-
-#define M_PI 3.14159265358979323846  /* pi */
-
 class CHIRP
 {
 public:
-
-    CHIRP() {};
-    CHIRP(float f0, float f1, int N, float Ts);
-
-    float operator()() {
-        return update();
-    }
-
+    CHIRP(){};
+    CHIRP(float _f0, float _f1, uint32_t _N, float _Ts);
     ~CHIRP();
 
-    void    setParameters(float f0, float f1, uint32_t N, float Ts);
-    void    reset();
-    float   update();
-    float   update(float& sinarg, float& fchirp);
-    
-    float   read_fchirp();
-    float   read_sinarg();
-    float   read_exc();
-    
+    void setParameters(float _f0, float _f1, uint32_t _N, float _Ts);
+    void optimizeParametersForEndFrequency(float &_f0, float &_f1, float &_beta, float &_t1, float &_k0, float &_k1);
+    void reset();
+    bool update();
+
+    float fchirp();
+    float sinarg();
+    float exc();
+
 private:
+    float m_f0, m_f1, m_t1, m_Ts, m_beta, m_k0, m_k1;
+    uint32_t m_ii, m_N;
+    float m_exc, m_fchirp, m_sinarg;
 
-    struct CHIRP_DATA {
-        CHIRP_DATA() : f0(0.0f), f1(0.0f), t1(0.0f), Ts(0.0f), beta(0.0f), k0(0.0f), k1(0.0f), ii(0), N(0) {}
-        float   f0, f1, t1, Ts, beta, k0, k1;
-        int     ii, N;
-    };
-
-    CHIRP_DATA* chirp_data;
-
-    float   f0_, f1_, t1_, Ts_, beta_, k0_, k1_;
-    int     ii_, N_;
-    float   exc_, fchirp_, sinarg_;
-    
-    void    calc_beta();
-
+    /*
+    float   calc_beta(float _f0, float _f1, float _t1);
+    */
 };
 
-#endif
+#endif // CHIRP_H_

@@ -1,7 +1,7 @@
 /*
    CHIRP: chirp sequence generator
 
-    instantiate option: CHIRP(float f0, float f1, int N, float Ts)
+    instantiate option: CHIRP(float f0, float f1, uint32_t N, float Ts)
 
     notes: INSERT DESCRIPTION HERE
 
@@ -12,98 +12,87 @@
 
 using namespace std;
 
-CHIRP::CHIRP(float f0, float f1, int N, float Ts)
+CHIRP::CHIRP(float _f0, float _f1, uint32_t _N, float _Ts)
 {
-    setParameters(f0, f1, N, Ts);
+    setParameters(_f0, _f1, _N, _Ts);
 }
 
 CHIRP::~CHIRP() {}
 
-void CHIRP::setParameters(float f0, float f1, uint32_t N, float Ts)
+void CHIRP::setParameters(float _f0, float _f1, uint32_t _N, float _Ts)
 {
+    m_f0 = _f0;
+    m_f1 = _f1;
+    m_t1 = static_cast<float>((_N - 1)) * _Ts;
+    m_Ts = _Ts;
+    m_ii = 0;
+    m_N = _N;
 
-    chirp_data = new CHIRP_DATA;
-
-    chirp_data->f0 = f0;
-    chirp_data->f1 = f1;
-    chirp_data->t1 = static_cast<float>( (N - 1) ) * Ts;
-    chirp_data->Ts = Ts;
-    // chirp_data->beta = f0;
-    // chirp_data->k0 = f0;
-    // chirp_data->k1 = f0;
-    chirp_data->ii = 0;
-    chirp_data->N  = N;
-
-    /* assign member variables */
-    f0_ = f0;
-    f1_ = f1;
-    t1_ = static_cast<float>( (N - 1) ) * Ts;
-    Ts_ = Ts;
-    ii_ = 0;
-    N_  = N;
-    
-    /* adjust f1 so that the sweep stops at angle 0 or pi */
-    calc_beta();
-    float sinarg_end = (f0_*(powf(beta_, t1_) - 1.0f)/logf(beta_));
-    float kr = floorf(sinarg_end);
-    /* solve correction through iterative inserting */
-    for(uint8_t i = 0; i < 13; i++) {
-        f1_ = f0_ + kr*logf(powf(f1_/f0_, 1.0f/t1_));
-    }
-    
-    calc_beta();
-    k0_ = 2.0f*M_PI/logf(beta_);
-    k1_ = k0_*f0_;
-    
+    optimizeParametersForEndFrequency(m_f0, m_f1, m_beta, m_t1, m_k0, m_k1);
     reset();
+}
+
+void CHIRP::optimizeParametersForEndFrequency(float &_f0, float &_f1, float &_beta, float &_t1, float &_k0, float &_k1)
+{
+    // adjust f1 so that the sweep stops at angle 0 or pi
+    _beta = powf(_f1 / _f0, 1.0f / _t1);
+    float sinargEnd = (_f0 * (powf(_beta, _t1) - 1.0f) / logf(_beta));
+    float kr = floorf(sinargEnd);
+
+    // solve correction through iterative inserting
+    for (uint8_t i = 0; i < 13; i++)
+    {
+        _f1 = _f0 + kr * logf(powf(_f1 / _f0, 1.0f / _t1));
+    }
+
+    // get final parameters
+    _beta = powf(_f1 / _f0, 1.0f / _t1);
+    _k0 = 2.0f * M_PI / logf(_beta);
+    _k1 = _k0 * _f0;
 }
 
 void CHIRP::reset()
 {
-    fchirp_ = 0.0f;
-    sinarg_ = 0.0f;
-    exc_ = 0.0f;
-    ii_ = 0;
-    
-    /* debug */
-    // printf("%9.6e; %9.6e; %9.6e; %9.6e; %9i; %9i; %9.6e; %9.6e; %9.6e;\r\n", f0_, f1_, t1_, Ts_, ii_, N_, beta_, k0_, k1_);
+    m_fchirp = 0.0f;
+    m_sinarg = 0.0f;
+    m_exc = 0.0f;
+    m_ii = 0;
 }
 
-float CHIRP::update()
+bool CHIRP::update()
 {
-    fchirp_ = f0_*powf(beta_, (float)ii_*Ts_);
-    sinarg_ = k0_*fchirp_ - k1_;
-    exc_ = sinf(sinarg_);
-    ii_++;
-    // if(ii_++ == N_ - 1) reset();
-    return exc_;
+    if (m_ii == m_N)
+    {
+        return false;
+    }
+    else
+    {
+        m_fchirp = m_f0 * powf(m_beta, static_cast<float>(m_ii) * m_Ts);
+        m_sinarg = m_k0 * m_fchirp - m_k1;
+        m_exc = sinf(m_sinarg);
+        m_ii++;
+        return true;
+    }
 }
 
-float CHIRP::update(float& sinarg, float& fchirp)
+float CHIRP::fchirp()
 {
-    update();
-    sinarg = sinarg_;
-    fchirp = fchirp_;
-    return exc_;
+    return m_fchirp;
 }
 
-float CHIRP::read_fchirp()
+float CHIRP::sinarg()
 {
-    return fchirp_;
+    return m_sinarg;
 }
 
-float CHIRP::read_sinarg()
+float CHIRP::exc()
 {
-    return sinarg_;
+    return m_exc;
 }
 
-float CHIRP::read_exc()
+/*
+float CHIRP::calc_beta(float _f0, float _f1, float _t1)
 {
-    return exc_;
+    return powf(_f1/_f0, 1.0f/_t1);
 }
-
-void CHIRP::calc_beta()
-{
-    beta_ = powf(f1_/f0_, 1.0f/t1_);
-}
-
+*/
