@@ -1,16 +1,4 @@
-/*
-   CHIRP: chirp sequence generator
-
-    instantiate option: CHIRP(float f0, float f1, uint32_t N, float Ts)
-
-    notes: INSERT DESCRIPTION HERE
-
-        autor: M.E. Peter
-*/
-
 #include "CHIRP.h"
-
-using namespace std;
 
 CHIRP::CHIRP(float _f0, float _f1, uint32_t _N, float _Ts)
 {
@@ -23,7 +11,7 @@ void CHIRP::setParameters(float _f0, float _f1, uint32_t _N, float _Ts)
 {
     m_f0 = _f0;
     m_f1 = _f1;
-    m_t1 = static_cast<float>((_N - 1)) * _Ts;
+    m_t1 = (float)(_N - 1) * _Ts;
     m_Ts = _Ts;
     m_ii = 0;
     m_N = _N;
@@ -67,7 +55,7 @@ bool CHIRP::update()
     }
     else
     {
-        m_fchirp = m_f0 * powf(m_beta, static_cast<float>(m_ii) * m_Ts);
+        m_fchirp = m_f0 * powf(m_beta, (float)(m_ii) * m_Ts);
         m_sinarg = m_k0 * m_fchirp - m_k1;
         m_exc = sinf(m_sinarg);
         m_ii++;

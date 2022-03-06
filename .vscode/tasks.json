@@ -8,9 +8,10 @@
 			"args": [
 				"-fdiagnostics-color=always",
 				"-g",
-				"${workspaceFolder}\\*.cpp", //"${file}",
+				"${workspaceFolder}\\*.cpp",
+				"${workspaceFolder}\\*.c",
 				"-o",
-				"${workspaceFolder}\\chirp.exe" //"${fileDirname}\\${fileBasenameNoExtension}.exe"
+				"${workspaceFolder}\\chirp.exe"
 			],
 			"options": {
 				"cwd": "${fileDirname}"
@@ -23,6 +24,6 @@
 				"isDefault": true
 			},
 			"detail": "compiler: C:\\msys64\\mingw64\\bin\\g++.exe"
-		}
+		},
 	]
 }
