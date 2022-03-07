@@ -15,14 +15,21 @@ void CHIRP::setParameters(float _f0, float _f1, uint32_t _N, float _Ts)
     m_f1 = _f1;
     m_t1 = (float)(_N - 1) * _Ts;
     m_Ts = _Ts;
-    m_ii = 0;
+    resetCount();
     m_N = _N;
-
-    optimizeParametersForEndFrequency(m_f0, m_f1, m_beta, m_t1, m_k0, m_k1);
-    reset();
+    // optimizeParametersForEndFrequency(m_f0, m_f1, m_beta, m_t1, m_k0, m_k1);
+    m_beta = powf(_f1 / _f0, 1.0f / m_t1);
+    m_k0 = 2.0f * M_PI / logf(m_beta);
+    m_k1 = m_k0 * _f0;
+    resetSignals();
 }
 
-void CHIRP::optimizeParametersForEndFrequency(float &_f0, float &_f1, float &_beta, float &_t1, float &_k0, float &_k1)
+void CHIRP::resetCount()
+{
+    m_count = 0;
+}
+
+void CHIRP::optimizeParametersForEndFrequency(const float &_f0, float &_f1, float &_beta, const float &_t1, float &_k0, float &_k1)
 {
     // adjust f1 so that the sweep stops at angle 0 or pi
     _beta = powf(_f1 / _f0, 1.0f / _t1);
@@ -41,26 +48,26 @@ void CHIRP::optimizeParametersForEndFrequency(float &_f0, float &_f1, float &_be
     _k1 = _k0 * _f0;
 }
 
-void CHIRP::reset()
+void CHIRP::resetSignals()
 {
     m_fchirp = 0.0f;
     m_sinarg = 0.0f;
     m_exc = 0.0f;
-    m_ii = 0;
 }
 
 bool CHIRP::update()
 {
-    if (m_ii == m_N)
+    if (m_count == m_N)
     {
+        resetSignals();
         return false;
     }
     else
     {
-        m_fchirp = m_f0 * powf(m_beta, (float)(m_ii) * m_Ts);
+        m_fchirp = m_f0 * powf(m_beta, (float)(m_count) * m_Ts);
         m_sinarg = m_k0 * m_fchirp - m_k1;
         m_exc = sinf(m_sinarg);
-        m_ii++;
+        m_count++;
         return true;
     }
 }

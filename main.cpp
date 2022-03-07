@@ -8,18 +8,17 @@
 int main(int argc, char *argv[])
 {
     bool do_plot_in_terminal = false;
+    bool do_use_cpp_implementation = false;
 
     // set up chirp generator
-    float Ts = 1.0f / 8e3f;
+    float Ts = 1.0f/8.0e3f;
     float f0 = 0.2f;
-    float f1 = 0.99f / 2.0f / Ts;
-    uint32_t N = 10.0f * 8e3f;
-    CHIRP *chirp = new CHIRP(f0, f1, N, Ts);
+    float f1 = 1.0e3f;
+    uint32_t N = 10*8e3;
+    CHIRP *chirp_cpp = new CHIRP(f0, f1, N, Ts);
 
-    chirp_t *chirp2 = new chirp_t;
-    chirpInit(chirp2, f0, f1, N, Ts);
-    // chirpOptimizeParametersForEndFrequency(chirp2);
-    // chirpReset(chirp2);
+    chirp_t *chirp_c = new chirp_t;
+    chirpInit(chirp_c, f0, f1, N, Ts);
 
     uint32_t cntr = 0;
 
@@ -30,23 +29,37 @@ int main(int argc, char *argv[])
     while (main_execute)
     {
         cntr++;
-        /*if (chirp->update())
+        if (do_use_cpp_implementation)
         {
-            std::cout << cntr << ", " << chirp->exc() << ", " << chirp->sinarg() << ", " << chirp->fchirp() << std::endl;
-            datafile << cntr << ", " << chirp->exc() << ", " << chirp->sinarg() << ", " << chirp->fchirp() << std::endl;
-        }*/
-        if (chirpUpdate(chirp2))
-        {
-            if (do_plot_in_terminal)
+            if (chirp_cpp->update())
             {
-                std::cout << cntr << ", " << chirp2->exc << ", " << chirp2->sinarg << ", " << chirp2->fchirp << std::endl;
+                if (do_plot_in_terminal)
+                {
+                    std::cout << cntr << ", " << chirp_cpp->exc() << ", " << chirp_cpp->sinarg() << ", " << chirp_cpp->fchirp() << std::endl;
+                }
+                datafile << cntr << ", " << chirp_cpp->exc() << ", " << chirp_cpp->sinarg() << ", " << chirp_cpp->fchirp() << std::endl;
             }
-            datafile << cntr << ", " << chirp2->exc << ", " << chirp2->sinarg << ", " << chirp2->fchirp << std::endl;
+            else
+            {
+                std::cout << "---   chirp finished" << std::endl;
+                main_execute = false;
+            }
         }
         else
         {
-            std::cout << "---   chirp finished" << std::endl;
-            main_execute = false;
+            if (chirpUpdate(chirp_c))
+            {
+                if (do_plot_in_terminal)
+                {
+                    std::cout << cntr << ", " << chirp_c->exc << ", " << chirp_c->sinarg << ", " << chirp_c->fchirp << std::endl;
+                }
+                datafile << cntr << ", " << chirp_c->exc << ", " << chirp_c->sinarg << ", " << chirp_c->fchirp << std::endl;
+            }
+            else
+            {
+                std::cout << "---   chirp finished" << std::endl;
+                main_execute = false;
+            }
         }
     }
 
