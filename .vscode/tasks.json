@@ -9,9 +9,10 @@
 				"-fdiagnostics-color=always",
 				"-g",
 				"${workspaceFolder}\\*.cpp",
-				"${workspaceFolder}\\*.c",
+				"${workspaceFolder}\\src\\*.cpp",
+				"${workspaceFolder}\\src\\*.c",
 				"-o",
-				"${workspaceFolder}\\chirp.exe"
+				"${workspaceFolder}\\output\\chirp.exe"
 			],
 			"options": {
 				"cwd": "${fileDirname}"

@@ -2,8 +2,8 @@
 #include <pthread.h>
 #include <fstream>
 
-#include "CHIRP.h"
-#include "chirp_c.h"
+#include "include/chirp_cpp.h"
+#include "include/chirp_c.h"
 
 int main(int argc, char *argv[])
 {
@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
     uint32_t cntr = 0;
 
     // open file for writing
-    std::ofstream datafile("chirp_meas_01.txt");
+    std::ofstream datafile("output/chirp_meas_01.txt");
 
     bool main_execute = true;
     while (main_execute)

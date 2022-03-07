@@ -1,4 +1,4 @@
-#include "chirp_c.h"
+#include "..\include/chirp_c.h"
 
 void chirpInit(chirp_t *chirp, float f0, float f1, uint32_t N, float Ts)
 {

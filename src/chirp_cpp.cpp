@@ -1,4 +1,4 @@
-#include "CHIRP.h"
+#include "..\include/chirp_cpp.h"
 
 CHIRP::CHIRP(float _f0, float _f1, uint32_t _N, float _Ts)
 {
