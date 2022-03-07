@@ -1,7 +1,6 @@
 #ifndef CHIRP_H_
 #define CHIRP_H_
 
-#include <math.h>
 #include <stdint.h>
 class CHIRP
 {
