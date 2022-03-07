@@ -7,11 +7,13 @@
 
 int main(int argc, char *argv[])
 {
+    bool do_plot_in_terminal = false;
+
     // set up chirp generator
-    float Ts = 0.01f;
+    float Ts = 1.0f / 8e3f;
     float f0 = 0.2f;
     float f1 = 0.99f / 2.0f / Ts;
-    uint32_t N = 1000;
+    uint32_t N = 10.0f * 8e3f;
     CHIRP *chirp = new CHIRP(f0, f1, N, Ts);
 
     chirp_t *chirp2 = new chirp_t;
@@ -35,7 +37,10 @@ int main(int argc, char *argv[])
         }*/
         if (chirpUpdate(chirp2))
         {
-            std::cout << cntr << ", " << chirp2->exc << ", " << chirp2->sinarg << ", " << chirp2->fchirp << std::endl;
+            if (do_plot_in_terminal)
+            {
+                std::cout << cntr << ", " << chirp2->exc << ", " << chirp2->sinarg << ", " << chirp2->fchirp << std::endl;
+            }
             datafile << cntr << ", " << chirp2->exc << ", " << chirp2->sinarg << ", " << chirp2->fchirp << std::endl;
         }
         else
