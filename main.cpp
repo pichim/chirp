@@ -1,5 +1,4 @@
 #include <iostream>
-#include <pthread.h>
 #include <fstream>
 
 #include "include/chirp_cpp.h"
