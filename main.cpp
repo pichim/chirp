@@ -1,9 +1,9 @@
 #include <iostream>
 #include <fstream>
 
-#include "include/chirp_cpp.h"
-#include "include/chirp_c.h"
-#include "include/filter.h"
+#include "chirp_cpp.h"
+#include "chirp_c.h"
+#include "filter.h"
 
 int main(int argc, char *argv[])
 {

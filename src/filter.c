@@ -25,9 +25,9 @@
 
 //#include "platform.h"
 
-#include "..\include/filter.h"
-#include "..\include/maths.h"
-#include "..\include/utils.h"
+#include "filter.h"
+#include "maths.h"
+#include "utils.h"
 
 #define BIQUAD_Q 1.0f / sqrtf(2.0f)     /* quality factor - 2nd order butterworth*/
 

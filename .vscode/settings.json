@@ -51,6 +51,7 @@
         "streambuf": "cpp",
         "thread": "cpp",
         "typeinfo": "cpp",
-        "chirp_c.h": "c"
+        "chirp_c.h": "c",
+        "maths.h": "c"
     }
 }

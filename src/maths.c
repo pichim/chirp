@@ -26,7 +26,7 @@
 //#include "build/build_config.h"
 
 //#include "axis.h"
-#include "..\include/maths.h"
+#include "maths.h"
 
 #if defined(FAST_MATH) || defined(VERY_FAST_MATH)
 #if defined(VERY_FAST_MATH)

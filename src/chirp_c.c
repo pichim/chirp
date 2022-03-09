@@ -1,5 +1,5 @@
-#include "..\include/chirp_c.h"
-#include "..\include/maths.h"
+#include "chirp_c.h"
+#include "maths.h"
 
 #include <math.h>
 
