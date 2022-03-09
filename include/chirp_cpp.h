@@ -5,13 +5,12 @@
 class CHIRP
 {
 public:
-    CHIRP(){};
-    CHIRP(float _f0, float _f1, uint32_t _N, float _Ts);
+    CHIRP();
     ~CHIRP();
 
-    void setParameters(float _f0, float _f1, uint32_t _N, float _Ts);
+    void init(float _f0, float _f1, uint32_t _N, float _Ts);
     void resetCount();
-    void optimizeParametersForEndFrequency(const float &_f0, float &_f1, float &_beta, const float &_t1, float &_k0, float &_k1);
+    float optimizeEndFrequency(const float &_f0, const float &_f1, const float &_t1, const float &_k0, const float &_k1);
     void resetSignals();
     bool update();
 

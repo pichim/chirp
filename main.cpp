@@ -8,19 +8,21 @@
 int main(int argc, char *argv[])
 {
     bool do_plot_in_terminal = false;
-    bool do_use_cpp_implementation = false;
+    bool do_use_cpp_implementation = true;
+    bool do_use_filter = false;
 
     // set up chirp generator
-    float Ts = 1.0f/8.0e3f;
+    float Ts = 10.0e-3f;
     float f0 = 0.2f;
-    float f1 = 1.0e3f;
-    uint32_t N = 10*8e3;
-    CHIRP *chirp_cpp = new CHIRP(f0, f1, N, Ts);
+    float f1 = 40.0f;
+    uint32_t N = 1e3;
+    CHIRP *chirp_cpp = new CHIRP();
+    chirp_cpp->init(f0, f1, N, Ts);
 
     chirp_t *chirp_c = new chirp_t;
     chirpInit(chirp_c, f0, f1, N, Ts);
 
-    biquadFilter_t* filter_c = new biquadFilter_t;
+    biquadFilter_t *filter_c = new biquadFilter_t;
     biquadFilterInitLPF(filter_c, 200.0f, (uint32_t)(Ts * 1.0e6f));
 
     uint32_t cntr = 0;
@@ -36,6 +38,15 @@ int main(int argc, char *argv[])
         {
             if (chirp_cpp->update())
             {
+                float exc;
+                if (do_use_filter)
+                {
+                    exc = biquadFilterApply(filter_c, chirp_cpp->exc());
+                }
+                else
+                {
+                    exc = chirp_cpp->exc();
+                }
                 if (do_plot_in_terminal)
                 {
                     std::cout << cntr << ", " << chirp_cpp->exc() << ", " << chirp_cpp->sinarg() << ", " << chirp_cpp->fchirp() << std::endl;
@@ -52,8 +63,15 @@ int main(int argc, char *argv[])
         {
             if (chirpUpdate(chirp_c))
             {
-                // float exc = chirp_c->exc;
-                float exc = biquadFilterApply(filter_c, chirp_c->exc);
+                float exc;
+                if (do_use_filter)
+                {
+                    exc = biquadFilterApply(filter_c, chirp_c->exc);
+                }
+                else
+                {
+                    exc = chirp_c->exc;
+                }
                 if (do_plot_in_terminal)
                 {
                     std::cout << cntr << ", " << exc << ", " << chirp_c->sinarg << ", " << chirp_c->fchirp << std::endl;

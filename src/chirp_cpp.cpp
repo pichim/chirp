@@ -2,14 +2,11 @@
 
 #include <math.h>
 
-CHIRP::CHIRP(float _f0, float _f1, uint32_t _N, float _Ts)
-{
-    setParameters(_f0, _f1, _N, _Ts);
-}
+CHIRP::CHIRP() {}
 
 CHIRP::~CHIRP() {}
 
-void CHIRP::setParameters(float _f0, float _f1, uint32_t _N, float _Ts)
+void CHIRP::init(float _f0, float _f1, uint32_t _N, float _Ts)
 {
     m_f0 = _f0;
     m_f1 = _f1;
@@ -17,10 +14,10 @@ void CHIRP::setParameters(float _f0, float _f1, uint32_t _N, float _Ts)
     m_Ts = _Ts;
     resetCount();
     m_N = _N;
-    // optimizeParametersForEndFrequency(m_f0, m_f1, m_beta, m_t1, m_k0, m_k1);
-    m_beta = powf(_f1 / _f0, 1.0f / m_t1);
+    // m_f1 = optimizeEndFrequency(m_f0, m_f1, m_t1, m_k0, m_k1);
+    m_beta = powf(m_f1 / m_f0, 1.0f / m_t1);
     m_k0 = 2.0f * M_PI / logf(m_beta);
-    m_k1 = m_k0 * _f0;
+    m_k1 = m_k0 * m_f0;
     resetSignals();
 }
 
@@ -29,23 +26,21 @@ void CHIRP::resetCount()
     m_count = 0;
 }
 
-void CHIRP::optimizeParametersForEndFrequency(const float &_f0, float &_f1, float &_beta, const float &_t1, float &_k0, float &_k1)
+float CHIRP::optimizeEndFrequency(const float &_f0, const float &_f1, const float &_t1, const float &_k0, const float &_k1)
 {
     // adjust f1 so that the sweep stops at angle 0 or pi
-    _beta = powf(_f1 / _f0, 1.0f / _t1);
-    float sinargEnd = (_f0 * (powf(_beta, _t1) - 1.0f) / logf(_beta));
+    float beta = powf(_f1 / _f0, 1.0f / _t1);
+    float sinargEnd = (_f0 * (powf(beta, _t1) - 1.0f) / logf(beta));
     float kr = floorf(sinargEnd);
 
     // solve correction through iterative inserting
+    float f1_opt = _f1;
     for (uint8_t i = 0; i < 13; i++)
     {
-        _f1 = _f0 + kr * logf(powf(_f1 / _f0, 1.0f / _t1));
+        f1_opt = _f0 + kr * logf(powf(f1_opt / _f0, 1.0f / _t1));
     }
 
-    // get final parameters
-    _beta = powf(_f1 / _f0, 1.0f / _t1);
-    _k0 = 2.0f * M_PI / logf(_beta);
-    _k1 = _k0 * _f0;
+    return f1_opt;
 }
 
 void CHIRP::resetSignals()
@@ -64,7 +59,7 @@ bool CHIRP::update()
     }
     else
     {
-        m_fchirp = m_f0 * powf(m_beta, (float)(m_count) * m_Ts);
+        m_fchirp = m_f0 * powf(m_beta, (float)(m_count)*m_Ts);
         m_sinarg = m_k0 * m_fchirp - m_k1;
         m_exc = sinf(m_sinarg);
         m_count++;

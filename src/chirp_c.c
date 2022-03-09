@@ -6,11 +6,11 @@
 void chirpInit(chirp_t *chirp, float f0, float f1, uint32_t N, float Ts)
 {
     chirp->f0 = f0;
-    chirp->f1 = f1; // not used
+    chirp->f1 = f1;                  // not used
     chirp->t1 = (float)(N - 1) * Ts; // not used
     chirp->Ts = Ts;
     chirpResetCount(chirp);
-    chirp->N = N;    
+    chirp->N = N;
     chirp->beta = pow_approx(chirp->f1 / chirp->f0, 1.0f / chirp->t1);
     chirp->k0 = 2.0f * M_PI / log_approx(chirp->beta);
     chirp->k1 = chirp->k0 * chirp->f0;
