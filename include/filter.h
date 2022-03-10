@@ -63,6 +63,11 @@ typedef struct laggedMovingAverage_s {
     bool primed;
 } laggedMovingAverage_t;
 
+typedef struct pt1TustinFilter_s {
+    float b, a;
+    float x, y;
+} pt1TustinFilter_t;
+
 typedef enum {
     FILTER_PT1 = 0,
     FILTER_BIQUAD,
@@ -119,3 +124,7 @@ typedef struct simpleLowpassFilter_s {
 
 int32_t simpleLPFilterUpdate(simpleLowpassFilter_t *filter, int32_t newVal);
 void simpleLPFilterInit(simpleLowpassFilter_t *filter, int32_t beta, int32_t fpShift);
+
+void pt1TustinFilterInit(pt1TustinFilter_t *filter, float filterFreq, uint32_t refreshRate);
+void pt1TustinUpdate(pt1TustinFilter_t *filter, float filterFreq, uint32_t refreshRate);
+float pt1TustinFilterApply(pt1TustinFilter_t *filter, float input);
