@@ -3,7 +3,7 @@
 
 #include <math.h>
 
-void chirpInit(chirp_t *chirp, float f0, float f1, uint32_t N, float Ts)
+void chirpInit(chirp_t *chirp, float f0, float f1, uint32_t N, float Ts) 
 {
     chirp->f0 = f0;
     chirp->f1 = f1;                  // not used
@@ -31,13 +31,10 @@ void chirpResetSignals(chirp_t *chirp)
 
 bool chirpUpdate(chirp_t *chirp)
 {
-    if (chirp->count == chirp->N)
-    {
+    if (chirp->count == chirp->N) {
         chirpResetSignals(chirp);
         return false;
-    }
-    else
-    {
+    } else {
         chirp->fchirp = chirp->f0 * pow_approx(chirp->beta, (float)(chirp->count) * chirp->Ts);
         chirp->sinarg = chirp->k0 * chirp->fchirp - chirp->k1;
         chirp->exc = sinf(chirp->sinarg);

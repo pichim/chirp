@@ -35,8 +35,7 @@ float CHIRP::optimizeEndFrequency(const float &_f0, const float &_f1, const floa
 
     // solve correction through iterative inserting
     float f1_opt = _f1;
-    for (uint8_t i = 0; i < 13; i++)
-    {
+    for (uint8_t i = 0; i < 13; i++) {
         f1_opt = _f0 + kr * logf(powf(f1_opt / _f0, 1.0f / _t1));
     }
 
@@ -52,13 +51,10 @@ void CHIRP::resetSignals()
 
 bool CHIRP::update()
 {
-    if (m_count == m_N)
-    {
+    if (m_count == m_N) {
         resetSignals();
         return false;
-    }
-    else
-    {
+    } else {
         m_fchirp = m_f0 * powf(m_beta, (float)(m_count)*m_Ts);
         m_sinarg = m_k0 * m_fchirp - m_k1;
         m_exc = sinf(m_sinarg);

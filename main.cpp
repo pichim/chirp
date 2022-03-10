@@ -33,57 +33,39 @@ int main(int argc, char *argv[])
     std::ofstream datafile("output/chirp_meas_01.txt");
 
     bool main_execute = true;
-    while (main_execute)
-    {
-        cntr++;
-        if (do_use_cpp_implementation)
-        {
-            if (chirp_cpp->update())
-            {
+    while (main_execute) {
+        cntr++; 
+        if (do_use_cpp_implementation) {
+            if (chirp_cpp->update()) {
                 float exc;
-                if (do_use_filter)
-                {
+                if (do_use_filter) {
                     // exc = biquadFilterApply(filter_c, chirp_cpp->exc());
                     exc = pt1TustinFilterApply(filter_c, chirp_cpp->exc());
-                }
-                else
-                {
+                } else {
                     exc = chirp_cpp->exc();
                 }
-                if (do_plot_in_terminal)
-                {
+                if (do_plot_in_terminal) {
                     std::cout << cntr << ", " << exc << ", " << chirp_cpp->sinarg() << ", " << chirp_cpp->fchirp() << std::endl;
                 }
                 datafile << cntr << ", " << exc << ", " << chirp_cpp->sinarg() << ", " << chirp_cpp->fchirp() << std::endl;
-            }
-            else
-            {
+            } else {
                 std::cout << "---   chirp finished" << std::endl;
                 main_execute = false;
             }
-        }
-        else
-        {
-            if (chirpUpdate(chirp_c))
-            {
+        } else {
+            if (chirpUpdate(chirp_c)) {
                 float exc;
-                if (do_use_filter)
-                {
+                if (do_use_filter) {
                     // exc = biquadFilterApply(filter_c, chirp_c->exc);
                     exc = pt1TustinFilterApply(filter_c, chirp_c->exc);
-                }
-                else
-                {
+                } else {
                     exc = chirp_c->exc;
                 }
-                if (do_plot_in_terminal)
-                {
+                if (do_plot_in_terminal) {
                     std::cout << cntr << ", " << exc << ", " << chirp_c->sinarg << ", " << chirp_c->fchirp << std::endl;
                 }
                 datafile << cntr << ", " << exc << ", " << chirp_c->sinarg << ", " << chirp_c->fchirp << std::endl;
-            }
-            else
-            {
+            } else {
                 std::cout << "---   chirp finished" << std::endl;
                 main_execute = false;
             }

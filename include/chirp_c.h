@@ -3,8 +3,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-typedef struct chirp_s
-{
+typedef struct chirp_s {
     float f0, f1, t1, Ts, beta, k0, k1;
     uint32_t count, N;
     float exc, fchirp, sinarg;
