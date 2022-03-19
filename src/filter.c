@@ -310,15 +310,15 @@ void simpleLPFilterInit(simpleLowpassFilter_t *filter, int32_t beta, int32_t fpS
     filter->fpShift = fpShift;
 }
 
-void pt1TustinFilterInit(pt1TustinFilter_t *filter, float filterFreq, uint32_t refreshRate)
+void pt1TustinFilterInit(pt1TustinFilter_t *filter, float filterFreq, float dT)
 {
-    pt1TustinUpdate(filter, filterFreq, refreshRate);
+    pt1TustinUpdate(filter, filterFreq, dT);
     filter->x = filter->y = 0;
 }
 
-void pt1TustinUpdate(pt1TustinFilter_t *filter, float filterFreq, uint32_t refreshRate)
+void pt1TustinUpdate(pt1TustinFilter_t *filter, float filterFreq, float dT)
 {
-    const float c = M_PIf * filterFreq * refreshRate * 0.000001f;
+    const float c = M_PIf * filterFreq * dT;
     filter->b = c / (c + 1.0f);
     filter->a = (c - 1.0f) / (c + 1.0f);
 }
