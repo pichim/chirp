@@ -12,7 +12,9 @@ void chirpInit(chirp_t *chirp, float f0, float f1, uint32_t N, float Ts)
     chirpResetCount(chirp);
     chirp->N = N;
     chirp->beta = pow_approx(chirp->f1 / chirp->f0, 1.0f / chirp->t1);
+    // chirp->beta = powf(chirp->f1 / chirp->f0, 1.0f / chirp->t1);
     chirp->k0 = 2.0f * M_PI / log_approx(chirp->beta);
+    // chirp->k0 = 2.0f * M_PI / logf(chirp->beta);
     chirp->k1 = chirp->k0 * chirp->f0;
     chirpResetSignals(chirp);
 }
@@ -37,6 +39,7 @@ bool chirpUpdate(chirp_t *chirp)
     } else {
         chirp->fchirp = chirp->f0 * pow_approx(chirp->beta, (float)(chirp->count) * chirp->Ts);
         chirp->sinarg = chirp->k0 * chirp->fchirp - chirp->k1;
+        // chirp->sinarg = fmod(chirp->k0 * chirp->fchirp - chirp->k1, 2.0f * M_PI);
         chirp->exc = sinf(chirp->sinarg);
         chirp->count++;
         return true;
