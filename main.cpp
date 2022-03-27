@@ -15,9 +15,9 @@ int main(int argc, char *argv[])
     // set up chirp generator
     float Ts = 1.0f / 8.0e3f;
     float f0 = 0.2f;
-    float f1 = 0.99f/2.0f/Ts;
-    uint32_t N = 20 * 8e3;
-    float alpha = 4.0;
+    float f1 = 800.0f;
+    uint32_t N = 30 * 8e3;
+    float alpha = 7.0;
 
     CHIRP *chirp_cpp = new CHIRP();
     chirp_cpp->init(f0, f1, N, Ts);
@@ -34,12 +34,14 @@ int main(int argc, char *argv[])
     float f_cut = 10.0f;
     // biquadFilter_t *filter_c = new biquadFilter_t;
     // biquadFilterInitLPF(filter_c, f_cut, (uint32_t)(Ts * 1.0e6f));
-    pt1TustinFilter_t *filter_c = new pt1TustinFilter_t;
-    pt1TustinFilterInit(filter_c, f_cut, Ts);
-    pt1TustinFilter_t *filter_c2 = new pt1TustinFilter_t;
-    pt1TustinFilterInit(filter_c2, 100.0f * f_cut, Ts);
+    // pt1TustinFilter_t *filter_c = new pt1TustinFilter_t;
+    // pt1TustinFilterInit(filter_c, f_cut, Ts);
+    // pt1TustinFilter_t *filter_c2 = new pt1TustinFilter_t;
+    // pt1TustinFilterInit(filter_c2, 100.0f * f_cut, Ts);
     // pt2Filter_t *filter_c = new pt2Filter_t;
     // pt2FilterInit(filter_c, pt2FilterGain(f_cut, Ts));
+    leadlag1Filter_t *filter_c = new leadlag1Filter_t;
+    leadlag1FilterInit(filter_c, 25.0f, 3.0f, Ts);
 
     uint32_t cntr = 0;
 
@@ -55,9 +57,10 @@ int main(int argc, char *argv[])
                 float excf = 0.0f;
                 if (do_use_filter) {
                     // excf = biquadFilterApply(filter_c, exc);
-                    excf = pt1TustinFilterApply(filter_c, exc);
-                    excf = pt1TustinFilterApply(filter_c2, excf);
+                    // excf = pt1TustinFilterApply(filter_c, exc);
+                    // excf = pt1TustinFilterApply(filter_c2, excf);
                     // excf = pt2FilterApply(filter_c, exc);
+                    excf = leadlag1FilterApply(filter_c, exc);
                 }
                 if (do_plot_in_terminal) {
                     std::cout << cntr << ", " << exc << ", " << excf << ", " << chirp_cpp->sinarg() << ", " << chirp_cpp->fchirp() << std::endl;
@@ -73,9 +76,10 @@ int main(int argc, char *argv[])
                 float excf = 0.0f;
                 if (do_use_filter) {
                     // excf = biquadFilterApply(filter_c, exc);
-                    excf = pt1TustinFilterApply(filter_c, exc);
-                    excf = pt1TustinFilterApply(filter_c2, excf);
+                    // excf = pt1TustinFilterApply(filter_c, exc);
+                    // excf = pt1TustinFilterApply(filter_c2, excf);
                     // excf = pt2FilterApply(filter_c, exc);
+                    excf = leadlag1FilterApply(filter_c, exc);
                 }
                 if (do_plot_in_terminal) {
                     std::cout << cntr << ", " << exc << ", " << excf << ", " << chirp_c.sinarg << ", " << chirp_c.fchirp << std::endl;

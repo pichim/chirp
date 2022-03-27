@@ -68,6 +68,11 @@ typedef struct pt1TustinFilter_s {
     float x, y;
 } pt1TustinFilter_t;
 
+typedef struct leadlag1Filter_s {
+    float b1, b0, a1;
+    float x, y;
+} leadlag1Filter_t;
+
 typedef enum {
     FILTER_PT1 = 0,
     FILTER_BIQUAD,
@@ -128,3 +133,7 @@ void simpleLPFilterInit(simpleLowpassFilter_t *filter, int32_t beta, int32_t fpS
 void pt1TustinFilterInit(pt1TustinFilter_t *filter, float filterFreq, float dT);
 void pt1TustinUpdate(pt1TustinFilter_t *filter, float filterFreq, float dT);
 float pt1TustinFilterApply(pt1TustinFilter_t *filter, float input);
+
+void leadlag1FilterInit(leadlag1Filter_t *filter, float fz, float fp, float dT);
+void leadlag1Update(leadlag1Filter_t *filter, float fz, float fp, float dT);
+float leadlag1FilterApply(leadlag1Filter_t *filter, float input);

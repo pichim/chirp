@@ -58,8 +58,14 @@ bool chirpUpdate(chirp_t *chirp)
             chirp->fchirp = chirp->f0 * pow_approx(chirp->beta, (float)(chirp->count) * chirp->Ts);
             chirp->sinarg = chirp->k0 * chirp->fchirp - chirp->k1;
         }
-        // chirp->sinarg = fmod(chirp->sinarg, 2.0f * M_PI);
-        chirp->exc = sinf(chirp->sinarg);
+        // wrap sinarg to 0...2*pi
+        chirp->sinarg = fmod(chirp->sinarg, 2.0f * M_PI);
+        // we do a cosine so that the angle will oscilate around 0 (integral of gyro)
+        chirp->exc = cosf(chirp->sinarg);
+        // frequencies below 1 Hz will lead to the same angle magnitude as at 1 Hz
+        if (chirp->fchirp < 1.0f) {
+            chirp->exc = chirp->fchirp * chirp->exc;
+        }
         chirp->count++;
         return true;
     }

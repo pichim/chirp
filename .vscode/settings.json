@@ -52,6 +52,7 @@
         "thread": "cpp",
         "typeinfo": "cpp",
         "chirp_c.h": "c",
-        "maths.h": "c"
+        "maths.h": "c",
+        "stdint.h": "c"
     }
 }
