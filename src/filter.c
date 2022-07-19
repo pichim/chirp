@@ -325,10 +325,10 @@ void pt1TustinUpdate(pt1TustinFilter_t *filter, float filterFreq, float dT)
 
 float pt1TustinFilterApply(pt1TustinFilter_t *filter, float input)
 {
-    filter->y = filter->b * (input + filter->x) - filter->a * filter->y;
+    const float result = filter->b * (input + filter->x) - filter->a * filter->y;
     filter->x = input;
-
-    return filter->y;
+    filter->y = result;
+    return result;
 }
 
 void leadlag1FilterInit(leadlag1Filter_t *filter, float fz, float fp, float dT)
@@ -348,8 +348,8 @@ void leadlag1Update(leadlag1Filter_t *filter, float fz, float fp, float dT)
 
 float leadlag1FilterApply(leadlag1Filter_t *filter, float input)
 {
-    filter->y = filter->b1 * input + filter->b0 * filter->x - filter->a1 * filter->y;
+    const float result = filter->b1 * input + filter->b0 * filter->x - filter->a1 * filter->y;
     filter->x = input;
-
+    filter->y = result;
     return filter->y;
 }
